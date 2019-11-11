@@ -36,14 +36,34 @@ ab -c 10 -t 120 http://localhost:8080/
 kubectl describe hpa
 ```
 
+## TODOs
+
+- change app, index and ytj to classes
+  - https://dev.to/aligoren/developing-an-express-application-using-typescript-3b1
+- create a class for incoming search query (and validate it somehow)
+
 ## Notes
 
 - could have used helm for installing metrics-server (instead of cloning it directly)
 
 ## Docs
 
+### Kubernetes
+
 - https://www.youtube.com/watch?v=h4J8xQWlsQw
 - https://github.com/dockersamples/k8s-wordsmith-demo
 - https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
 - https://blog.codewithdan.com/enabling-metrics-server-for-kubernetes-on-docker-desktop/
 - https://stackoverflow.com/questions/54106725/docker-kubernetes-mac-autoscaler-unable-to-find-metrics
+
+### Typescript
+
+- https://github.com/Microsoft/TypeScript-Node-Starter#typescript-node-starter
+- https://medium.com/javascript-in-plain-english/typescript-with-node-and-express-js-why-when-and-how-eb6bc73edd5d
+- https://itnext.io/wiring-up-an-api-server-with-express-and-swagger-9bffe0a0d6bd
+- https://github.com/lukeautry/tsoa
+- https://medium.com/willsonic/swagger-nodejs-typescript-tsoa-15a3f10fabaf
+- https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser
+- https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin
+- https://www.netguru.com/codestories/top-5-most-used-patterns-in-oop-with-typescript
+- https://dev.to/aligoren/developing-an-express-application-using-typescript-3b1
