@@ -16,7 +16,7 @@ kubectl delete pods --all --force
 
 # Building/testing the containers
 docker-compose build
-docker run --rm -i -t -v %cd%/projects/api:/root/api -p 8080:80 kube-node-react-api:latest /bin/sh
+docker run --rm -i -t -v %cd%:/root/knr -w /root/knr -p 8080:80 node:13-alpine /bin/sh
 
 # Starting/deleting the cluster
 kubectl apply -f kube.yml

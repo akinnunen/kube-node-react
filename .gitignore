@@ -1,3 +1,7 @@
+node_modules
+
 projects/metrics-server
 projects/api/node_modules
 projects/api/build
+
+projects/models/node_modules

@@ -1,0 +1,21 @@
+{
+  "name": "kube-node-react",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akinnunen/kube-node-react.git"
+  },
+  "workspaces": {
+    "packages": [
+      "projects/*"
+    ],
+    "nohoist": [
+      "**/api/**",
+      "**/models/**"
+    ]
+  }
+}

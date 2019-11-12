@@ -1,19 +1,18 @@
+import R from 'ramda'
 import request from 'request-promise-native'
 import cheerio from 'cheerio'
 import randomUserAgent from 'random-useragent'
+import { SearchResults, SearchResultItem } from '@knr/models'
+
+const url = 'https://tietopalvelu.ytj.fi/yrityshaku.aspx?kielikoodi=1'
 
 /**
- * Does not currently read paged results
+ * Search params consist of hidden security related form fields (that are
+ * read from the html) and fields present in the search form.
  */
-const search = async (name: string) => {
+const buildSearchParams = (qs: string, $: CheerioSelector): object => {
 
-  const url = 'https://tietopalvelu.ytj.fi/yrityshaku.aspx?kielikoodi=1'
-
-  const cookieJar = request.jar()
-  const getRes = await request.get({ url, jar: cookieJar })
-  const $g = cheerio.load(getRes)
-
-  const hiddenFieldNames = [
+  const securityFields = [
     '__LASTFOCUS',
     '__EVENTTARGET',
     '__EVENTARGUMENT',
@@ -22,10 +21,8 @@ const search = async (name: string) => {
     '__EVENTVALIDATION'
   ]
 
-  const extraSearchParams = Object.assign({}, ...hiddenFieldNames.map((name) => ({ [name]: $g(`input[name="${name}"]`).val() })))
-
-  const searchParams = Object.assign({
-    '_ctl0:cphSisalto:hakusana': name,
+  const formFields = {
+    '_ctl0:cphSisalto:hakusana': qs,
     '_ctl0:cphSisalto:ytunnus': '',
     '_ctl0:cphSisalto:yrmu': '',
     '_ctl0:cphSisalto:LEItunnus': '',
@@ -33,45 +30,66 @@ const search = async (name: string) => {
     '_ctl0:cphSisalto:suodatus': 'suodatus1',
     '_ctl0:cphSisalto:hidsortorder': '2',
     '_ctl0:cphSisalto:Hae': 'Hae'
-  }, extraSearchParams)
-
-  const searchRes = await request.post({
-    url,
-    form: searchParams,
-    headers: {
-      'User-Agent': randomUserAgent.getRandom()
-    },
-    jar: cookieJar
-  })
-
-  if (searchRes.includes('Hakutuloksia yli 200')) {
-    throw new Error('Too many search results, please refine your search')
   }
 
-  const $s = cheerio.load(searchRes)
+  const searchParams = R.pipe(
+    R.map((field: string) => ({ [field]: $(`input[name="${field}"]`).val() })),
+    R.mergeAll,
+    R.mergeLeft(formFields)
+  )(securityFields)
 
-  const trsAsResults = (tr: CheerioElement) => {
+  return searchParams
 
-    const [ aElem, nameElem, typeElem ] = $s(tr).find('td').toArray()
+}
 
-    const id = $s(aElem).text().trim()
-    const uri = $s(aElem).find('a').attr('href')
-    const name = $s(nameElem).text().trim()
-    const type = $s(typeElem).text().trim()
+const buildSearchResults = ($: CheerioSelector): SearchResults => {
 
+   const trAsResultItem = (tr: CheerioElement): SearchResultItem => {
+    const [ aElem, nameElem, typeElem ] = $(tr).find('td').toArray()
+    const id = $(aElem).text().trim()
+    const uri = $(aElem).find('a').attr('href')
+    const name = $(nameElem).text().trim()
+    const type = $(typeElem).text().trim()
     return { id, name, type, uri }
   }
 
-  const res = $s('div[id="search-result"]')
+  return $('div[id="search-result"]')
     .find('table > tbody > tr')
     .toArray()
     .slice(1)
-    .map(trsAsResults)
+    .map(trAsResultItem)
+}
 
-  return res
+
+/**
+ * Does not currently read paged results or retry failed requests.
+ */
+const run = async (qs: string): Promise<SearchResults> => {
+
+  const jar = request.jar()
+
+  const getResponse = await request.get({ url, jar })
+  const $getResponse = cheerio.load(getResponse)
+  const searchParams = buildSearchParams(qs, $getResponse)
+
+  const postResponse = await request.post({
+    url,
+    jar,
+    form: searchParams,
+    headers: { 'User-Agent': randomUserAgent.getRandom() }
+  })
+
+  if (postResponse.includes('Hakutuloksia yli 200')) {
+    throw new Error('Too many search results, please refine your search')
+  }
+
+  const $postResponse = cheerio.load(postResponse)
+  const results = buildSearchResults($postResponse)
+
+  return results
 
 }
 
 export {
-  search
+  run
 }
