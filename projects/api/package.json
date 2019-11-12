@@ -5,16 +5,31 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev --poll --respawn --transpileOnly --ignore-watch node_modules ./src/app.ts",
-    "lint": "eslint src --ext .ts,.js"
+    "dev": "ts-node-dev --poll --respawn --transpileOnly --ignore-watch node_modules ./src/server.ts",
+    "lint": "eslint src --ext .ts,.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.17.1",
+    "random-useragent": "^0.3.1",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.8"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.14",
+    "@types/random-useragent": "^0.3.0",
+    "@types/request-promise-native": "^1.0.17",
+    "@types/request": "^2.48.3",
     "@types/express": "^4.17.2",
+    "@types/jest": "^24.0.22",
     "@types/node": "^12.12.7",
     "@typescript-eslint/eslint-plugin": "^2.6.1",
     "@typescript-eslint/parser": "^2.6.1",
     "eslint": "^6.6.0",
-    "express": "^4.17.1",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0",
     "ts-node": "^8.5.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.2"
@@ -24,11 +39,26 @@
     "parserOptions": {
       "project": "./tsconfig.json"
     },
-    "plugins": ["@typescript-eslint"],
+    "plugins": [
+      "@typescript-eslint"
+    ],
     "extends": [
       "eslint:recommended",
       "plugin:@typescript-eslint/eslint-recommended",
       "plugin:@typescript-eslint/recommended"
     ]
+  },
+  "jest": {
+    "verbose": true,
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.+(ts|tsx|js)",
+      "**/?(*.)+(spec|test).+(ts|tsx|js)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)?$": "ts-jest"
+    }
   }
 }
