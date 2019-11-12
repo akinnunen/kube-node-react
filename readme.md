@@ -38,9 +38,10 @@ kubectl describe hpa
 
 ## TODOs
 
-- change app, index and ytj to classes
+- consider using more OOP
   - https://dev.to/aligoren/developing-an-express-application-using-typescript-3b1
-- create a class for incoming search query (and validate it somehow)
+- use swagger (?) to document apis
+  - specify models for incoming queries (e.g. YtjSearchQuery)
 
 ## Notes
 
