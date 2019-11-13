@@ -54,6 +54,7 @@ kubectl logs --follow pod/knr-frontend-deployment-674bbc5466-lglpt
 - specify models for incoming queries (e.g. YtjSearchQuery)
 - add frontend tests
 - add hoc for frontend
+- https://github.com/typestack/class-validator (?)
 
 ## Notes
 
