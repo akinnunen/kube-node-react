@@ -2,7 +2,6 @@
   "name": "@knr/api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "dev": "ts-node-dev --poll --respawn --transpileOnly --ignore-watch node_modules ./src/server.ts",

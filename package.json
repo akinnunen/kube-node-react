@@ -15,7 +15,8 @@
     ],
     "nohoist": [
       "**/api/**",
-      "**/models/**"
+      "**/models/**",
+      "**/frontend/**"
     ]
   }
 }

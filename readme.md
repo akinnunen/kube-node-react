@@ -16,7 +16,7 @@ kubectl delete pods --all --force
 
 # Building/testing the containers
 docker-compose build
-docker run --rm -i -t -v %cd%:/root/knr -w /root/knr -p 8080:80 node:13-alpine /bin/sh
+docker run --rm -i -t -v %cd%:/root/knr -w /root/knr -p 8080:80 -p 8081:8081 node:13-alpine /bin/sh
 
 # Starting/deleting the cluster
 kubectl apply -f kube.yml
@@ -42,10 +42,13 @@ kubectl describe hpa
   - https://dev.to/aligoren/developing-an-express-application-using-typescript-3b1
 - use swagger (?) to document apis
   - specify models for incoming queries (e.g. YtjSearchQuery)
+- when installing frontend node modules
+  - apk add python make g++
 
 ## Notes
 
 - could have used helm for installing metrics-server (instead of cloning it directly)
+- parcel 1.x.x TS support is not very good (https://github.com/parcel-bundler/parcel/issues/1378)
 
 ## Docs
 
@@ -68,3 +71,5 @@ kubectl describe hpa
 - https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin
 - https://www.netguru.com/codestories/top-5-most-used-patterns-in-oop-with-typescript
 - https://dev.to/aligoren/developing-an-express-application-using-typescript-3b1
+- https://dev.to/grant_bartlett/getting-started-with-react-typescript-and-parcel-1ocb
+- https://fettblog.eu/typescript-react/components/
