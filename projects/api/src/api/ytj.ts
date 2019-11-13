@@ -8,6 +8,7 @@ router.get('/search', async (req: Request, res: Response): Promise<any> => {
 
   const name: string = req.query.name
 
+  // FIXME: can throw
   const results: SearchResults = await ytjSearch.run(name)
 
   return res.json(results)

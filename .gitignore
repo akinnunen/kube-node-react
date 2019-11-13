@@ -1,8 +1,8 @@
 yarn-error.log
-
 node_modules
 
-projects/metrics-server
+kubernetes/metrics-server
+
 projects/api/node_modules
 projects/api/build
 

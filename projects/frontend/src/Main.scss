@@ -1,0 +1,43 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  font-size: 110%;
+  text-align: center;
+}
+
+table, tr, td, ul {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  margin: auto;
+  width: 50%;
+}
+
+.search {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.results {
+
+  width: 100%;
+  text-align: left;
+  font-size: 90%;
+  border-collapse: collapse;
+
+  .resultRow {
+    border-bottom: 1px dashed lightgray;
+    padding: 0.25rem 0;
+  }
+
+  .idType {
+    color: gray;
+    font-size: 80%;
+    display: block;
+  }
+
+}

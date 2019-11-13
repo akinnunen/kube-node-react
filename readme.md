@@ -1,12 +1,8 @@
-# Kubernetes, node and react spike
+# Kubernetes, node and react spike (feat. typescript)
 
 ## Cmds
 
 ```
-# Deploying using a compose file
-docker stack deploy -c docker-compose.yml knr
-docker stack rm knr
-
 # Common kubectl cmds
 kubectl describe all
 kubectl get all
@@ -14,41 +10,55 @@ kubectl get all -n kube-system
 kubectl delete deployment.apps/api
 kubectl delete pods --all --force
 
-# Building/testing the containers
-docker-compose build
-docker run --rm -i -t -v %cd%:/root/knr -w /root/knr -p 8080:80 -p 8081:8081 node:13-alpine /bin/sh
-
 # Starting/deleting the cluster
-kubectl apply -f kube.yml
-kubectl delete -f kube.yml
+kubectl apply -f kubernetes/
+kubectl delete -f kubernetes/
 
 # Deploying/verifying metrics-server
-git clone git@github.com:kubernetes-sigs/metrics-server.git projects/metrics-server
-kubectl create -f projects/metrics-server/deploy/1.8+/
+git clone git@github.com:kubernetes-sigs/metrics-server.git kubernetes/metrics-server
+# edit metrics-server-deployment.yaml and add args
+# - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+# - --kubelet-insecure-tls
+kubectl create -f kubernetes/metrics-server/deploy/1.8+/
 kubectl top node
 kubectl top pods -n kube-system
 kubectl get pods -n kube-system
 kubectl logs metrics-server-78cb4f6495-926bf -n kube-system
-kubectl delete -f projects/metrics-server/deploy/1.8+/
+kubectl delete -f kubernetes/metrics-server/deploy/1.8+/
 
 # Testing autoscaling
 ab -c 10 -t 120 http://localhost:8080/
 kubectl describe hpa
+
+# Misc
+kubectl exec -it pod/knr-nginx-5ccd7646bd-627p2 -- /bin/sh
+
+# Build images
+docker build -t knr-frontend:latest projects/frontend/docker
+docker build -t knr-api:latest projects/api/docker
+
+# Run standalone containers
+docker run --rm -i -t -v %cd%:/root/knr -w /root/knr/projects/frontend -p 8082:80 -p 8083:8083 knr-frontend /bin/sh
+docker run --rm -i -t -v %cd%:/root/knr -w /root/knr/projects/api -p 8081:80 knr-api /bin/sh
+
+# Logs
+kubectl logs --follow service/knr-frontend
+kubectl logs --follow pod/knr-frontend-deployment-674bbc5466-lglpt
+
 ```
 
 ## TODOs
 
-- consider using more OOP
-  - https://dev.to/aligoren/developing-an-express-application-using-typescript-3b1
 - use swagger (?) to document apis
   - specify models for incoming queries (e.g. YtjSearchQuery)
-- when installing frontend node modules
-  - apk add python make g++
+- these are needed when running yarn in the project root: apk add python make g++
 
 ## Notes
 
 - could have used helm for installing metrics-server (instead of cloning it directly)
-- parcel 1.x.x TS support is not very good (https://github.com/parcel-bundler/parcel/issues/1378)
+- parcel 1.x.x typescript support is not very good (https://github.com/parcel-bundler/parcel/issues/1378)
+- hardcoded ports are used in kube's yml files and nginx.conf (which is not the way to go)
+- kubernetes has an issue with relative mounts on windows https://github.com/docker/for-win/issues/3289
 
 ## Docs
 

@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: knr-nginx
+spec:
+  selector:
+    app: knr-nginx
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 80
+  type: LoadBalancer
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knr-nginx
+spec:
+  selector:
+    matchLabels:
+      app: knr-nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: knr-nginx
+    spec:
+      containers:
+      - name: knr-nginx
+        image: nginx:1.17-alpine
+        volumeMounts:
+        - mountPath: /etc/nginx/nginx.conf
+          name: knr-nginx-volume
+      volumes:
+      - name: knr-nginx-volume
+        hostPath:
+          path: //c/code/personal/kube-node-react/kubernetes/nginx.conf
