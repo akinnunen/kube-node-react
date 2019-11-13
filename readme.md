@@ -7,8 +7,6 @@
 kubectl describe all
 kubectl get all
 kubectl get all -n kube-system
-kubectl delete deployment.apps/api
-kubectl delete pods --all --force
 
 # Starting/deleting the cluster
 kubectl apply -f kubernetes/
@@ -30,7 +28,7 @@ kubectl delete -f kubernetes/metrics-server/deploy/1.8+/
 ab -c 10 -t 120 http://localhost:8080/
 kubectl describe hpa
 
-# Misc
+# Jump into a pod
 kubectl exec -it pod/knr-nginx-5ccd7646bd-627p2 -- /bin/sh
 
 # Build images
@@ -49,9 +47,13 @@ kubectl logs --follow pod/knr-frontend-deployment-674bbc5466-lglpt
 
 ## TODOs
 
-- use swagger (?) to document apis
-  - specify models for incoming queries (e.g. YtjSearchQuery)
-- these are needed when running yarn in the project root: apk add python make g++
+- handle search errors in api and frontend
+- add a loading icon for the search
+- use swagger to document apis
+- add validation to api
+- specify models for incoming queries (e.g. YtjSearchQuery)
+- add frontend tests
+- add hoc for frontend
 
 ## Notes
 
