@@ -1,5 +1,8 @@
 import SearchResultItem from './SearchResultItem'
 
-export default interface SearchResults extends Array<SearchResultItem> {
+export default interface SearchResults {
+
+  items: Array<SearchResultItem>
+  message?: string
 
 }

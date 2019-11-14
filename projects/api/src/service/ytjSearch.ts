@@ -5,12 +5,14 @@ import randomUserAgent from 'random-useragent'
 import { SearchResults, SearchResultItem } from '@knr/models'
 
 const url = 'https://tietopalvelu.ytj.fi/yrityshaku.aspx?kielikoodi=1'
+const tooManySearchResults = 'Hakutuloksia yli 200'
+const noSearchResults = 'Hakuehdoilla ei löytynyt'
 
 /**
  * Search params consist of hidden security related form fields (that are
  * read from the html) and fields present in the search form.
  */
-const buildSearchParams = (qs: string, $: CheerioSelector): object => {
+const buildSearchParams = (keyword: string, $: CheerioSelector): object => {
 
   const securityFields = [
     '__LASTFOCUS',
@@ -22,7 +24,7 @@ const buildSearchParams = (qs: string, $: CheerioSelector): object => {
   ]
 
   const formFields = {
-    '_ctl0:cphSisalto:hakusana': qs,
+    '_ctl0:cphSisalto:hakusana': keyword,
     '_ctl0:cphSisalto:ytunnus': '',
     '_ctl0:cphSisalto:yrmu': '',
     '_ctl0:cphSisalto:LEItunnus': '',
@@ -53,24 +55,29 @@ const buildSearchResults = ($: CheerioSelector): SearchResults => {
     return { id, name, type, uri }
   }
 
-  return $('div[id="search-result"]')
-    .find('table > tbody > tr')
-    .toArray()
-    .slice(1)
-    .map(trAsResultItem)
+  return {
+    items: $('div[id="search-result"]')
+      .find('table > tbody > tr')
+      .toArray()
+      .slice(1)
+      .map(trAsResultItem)
+   }
 }
-
 
 /**
  * Does not currently read paged results or retry failed requests.
  */
-const run = async (qs: string): Promise<SearchResults> => {
+const run = async (keyword: string): Promise<SearchResults> => {
+
+  if (keyword.length < 3) {
+    throw { status: 400, message: 'Search keyword has to be at least 3 characters long.' }
+  }
 
   const jar = request.jar()
 
   const getResponse = await request.get({ url, jar })
   const $getResponse = cheerio.load(getResponse)
-  const searchParams = buildSearchParams(qs, $getResponse)
+  const searchParams = buildSearchParams(keyword, $getResponse)
 
   const postResponse = await request.post({
     url,
@@ -79,8 +86,12 @@ const run = async (qs: string): Promise<SearchResults> => {
     headers: { 'User-Agent': randomUserAgent.getRandom() }
   })
 
-  if (postResponse.includes('Hakutuloksia yli 200')) {
-    throw new Error('Too many search results, please refine your search')
+  if (postResponse.includes(tooManySearchResults)) {
+    return { items: [], message: 'Too many search results. Please refine your search.' }
+  }
+
+  if (postResponse.includes(noSearchResults)) {
+    return { items: [], message: 'No search results.' }
   }
 
   const $postResponse = cheerio.load(postResponse)

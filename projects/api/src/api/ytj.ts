@@ -1,18 +1,19 @@
-import { Router, Request, Response } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import { SearchResults } from '@knr/models'
 import * as ytjSearch from '../service/ytjSearch'
 
 const router = Router()
 
-router.get('/search', async (req: Request, res: Response): Promise<any> => {
+const handleAsync = (fn: Function) => (req: Request, res: Response, next: NextFunction) =>
+  Promise
+    .resolve(fn(req, res, next))
+    .catch(next)
 
+router.get('/search', handleAsync(async (req: Request, res: Response): Promise<any> => {
   const name: string = req.query.name
-
-  // FIXME: can throw, check also Promise<any> ^
   const results: SearchResults = await ytjSearch.run(name)
-
   return res.json(results)
 
-})
+}))
 
 export default router
