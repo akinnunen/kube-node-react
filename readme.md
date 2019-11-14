@@ -1,6 +1,6 @@
 # Kubernetes, nodejs and react spike (feat. typescript)
 
-I created this project during 5 days (\~30 hours). The goal was to teach myself the very basics of kubernetes and typescript. Here's what this monorepo holds:
+I created this project during 5 days (\~30 hours) with a goal to teach myself the very basics of kubernetes and typescript. Here's what this monorepo holds:
 
 - kubernetes cluster for local development (that scales automatically based on load)
 - react+ts frontend for searching Finnish companies by name
@@ -14,20 +14,26 @@ There are still quite a few improvements I might/should do in the future. More o
 
 ## Starting the environment
 
-You'll need Kubernetes installed and kubectl and docker available on your command line. If you want to see autoscaling in action, make sure you have `metrics-server` installed before proceeding (see [Installing metrics-server](#installing-metrics-server)).
+You'll need Kubernetes installed and kubectl and docker available in your terminal. If you want to see autoscaling in action, make sure you have `metrics-server` installed before proceeding (see [Installing metrics-server](#installing-metrics-server)).
+
+Also, because relative volume mounts are not supported in kubernetes yaml files (and variable substitution does not exist in kubectl), you'll have to replace couple of hardcoded paths in `kubernetes/*.yml` files. Search for `//c/code/personal/kube-node-react` and replace them with a `/path/to/kube-node-react` on your machine. Btw. there is a solution to this in the [TODOs](#todos) section. And no, I usually do not code on Windows.
+
+Alright, let's start the environment finally:
 
 1. build the docker images for frontend and api
     - `docker build -t knr-frontend:latest projects/frontend/docker`
     - `docker build -t knr-api:latest projects/api/docker`
-2. start the kubernetes cluster
+2. install node modules (this takes a while)
+    - `docker run --rm -i -t -v %cd%:/root/knr -w /root/knr knr-frontend yarn`
+3. start the kubernetes cluster
     - `kubectl apply -f kubernetes/`
-3. check that everything is running
+4. check that everything is running
     - `kubectl get all`
-4. open app in your browser
+5. open the app in your browser
     - [http://localhost:8080/](http://localhost:8080/)
-5. generate load agaist the api (if you wanna see it autoscale)
+6. generate load agaist the api (if you wanna see it autoscale)
     - `ab -c 10 -t 120 http://localhost:8080/api/ytj/search?name=hhh`
-6. once you're done remove the whole environment with
+7. once you're done remove the whole environment
     - `kubectl delete -f kubernetes/`
 
 ## Installing metrics-server (optional)
@@ -70,34 +76,31 @@ You'll need Kubernetes installed and kubectl and docker available on your comman
 
 ## TODOs
 
-- add a loading icon for the search
-- specify models for incoming queries (e.g. YtjSearchQuery)
-
-## Notes
-
 ### Kubernetes
 
-- could have used helm for installing metrics-server (instead of cloning it directly)
-- hardcoded ports are used in kube's yml files and nginx.conf (which is not the way to go)
-- kubernetes has an issue with relative mounts on windows https://github.com/docker/for-win/issues/3289
+- use helm for `kubernetes/*.yml` and `metrics-server` installation
+- get rid of hardcoded ports in `kubernetes/*.yml` and `nginx.conf`
 
 ### Frontend
 
-- parcel 1.x.x typescript support is not very good (https://github.com/parcel-bundler/parcel/issues/1378)
-- hoc's
-- tests
+- use webpack instead of parcel (because parcel's typescript support [is not currently very good](https://github.com/parcel-bundler/parcel/issues/1378))
+- implement feature based folder structure once the app gets larger
+- move complex business logic from components to HOCs
+- add tests (jest and possibly puppeteer)
+- add a css in js library (e.g. styled-components)
+- add a loading icon for the search
 
 ### Api
 
-- handleAsync should be moved elsewhere
-- swagger
-- validation
+- handle ytj request errors (and maybe retry failed ones n number of times)
+- make handleAsync reusable
+- add swagger docs for the endpoints (remember DRY and @knr/models)
 
 ### Models
 
-- better name (?)
+- give this module a better name (?)
 
-## Docs
+## Related articles etc.
 
 ### Kubernetes
 
