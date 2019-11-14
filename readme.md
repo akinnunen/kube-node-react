@@ -14,7 +14,7 @@ There are still quite a few improvements I might/should do in the future. More o
 
 ## Starting the environment
 
-You'll need Kubernetes installed and kubectl and docker available in your terminal. If you want to see autoscaling in action, make sure you have `metrics-server` installed before proceeding (see [Installing metrics-server](#installing-metrics-server)).
+You'll need Kubernetes installed and `kubectl` and `docker` available in your terminal. If you want to see autoscaling in action, make sure you have `metrics-server` installed before proceeding (see [Installing metrics-server](#installing-metrics-server)).
 
 Also, because relative volume mounts are not supported in kubernetes yaml files (and variable substitution does not exist in kubectl), you'll have to replace couple of hardcoded paths in `kubernetes/*.yml` files. Search for `//c/code/personal/kube-node-react` and replace them with a `/path/to/kube-node-react` on your machine. Btw. there is a solution to this in the [TODOs](#todos) section. And no, I usually do not code on Windows.
 
@@ -24,7 +24,8 @@ Alright, let's start the environment finally:
     - `docker build -t knr-frontend:latest projects/frontend/docker`
     - `docker build -t knr-api:latest projects/api/docker`
 2. install node modules (this takes a while)
-    - `docker run --rm -i -t -v %cd%:/root/knr -w /root/knr knr-frontend yarn`
+    - `docker run --rm -i -t -v %cd%:/root/knr -w /root/knr knr-frontend yarn` (windows)
+    - `docker run --rm -i -t -v $(pwd):/root/knr -w /root/knr knr-frontend yarn` (linux/mac)
 3. start the kubernetes cluster
     - `kubectl apply -f kubernetes/`
 4. check that everything is running
@@ -78,7 +79,8 @@ Alright, let's start the environment finally:
 
 ### Kubernetes
 
-- use helm for `kubernetes/*.yml` and `metrics-server` installation
+- change `kubernetes/*.yml` files into helm charts (to get rid of the hardcoded paths)
+- use helm also for `metrics-server` installation
 - get rid of hardcoded ports in `kubernetes/*.yml` and `nginx.conf`
 
 ### Frontend
