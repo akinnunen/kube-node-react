@@ -28,7 +28,7 @@ Alright, let's start the environment finally:
 2. install node modules (this takes a while)
     - `docker run --rm -i -t -v %cd%:/root/knr -w /root/knr knr-frontend yarn` (windows)
     - `docker run --rm -i -t -v $(pwd):/root/knr -w /root/knr knr-frontend yarn` (linux/mac)
-3. start the kubernetes cluster
+3. start the apps
     - `kubectl apply -f kubernetes/`
 4. check that everything is running
     - `kubectl get all`
