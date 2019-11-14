@@ -36,7 +36,7 @@ Alright, let's start the environment finally:
 7. once you're done remove the whole environment
     - `kubectl delete -f kubernetes/`
 
-## Installing metrics-server (optional)
+## Installing metrics-server
 
 1. `git clone git@github.com:kubernetes-sigs/metrics-server.git kubernetes/metrics-server`
 2. edit `metrics-server-deployment.yaml` and add the following args
