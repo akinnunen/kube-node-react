@@ -9,6 +9,8 @@ I created this project during 5 days (\~30 hours) with a goal to teach myself th
 - shared @knr/models module (with typescript interfaces) that's used in both frontend and api
 - yarn workspaces for managing dependencies
 - jest powered testing
+- frontend and api hot reloading
+- eslint for typescript
 
 There are still quite a few improvements I might/should do in the future. More on those under the [TODOs](#todos) topic.
 
@@ -32,6 +34,7 @@ Alright, let's start the environment finally:
     - `kubectl get all`
 5. open the app in your browser
     - [http://localhost:8080/](http://localhost:8080/)
+    - note that both of the apps reload themselves automatically when changes to the code are made
 6. generate load agaist the api (if you wanna see it autoscale)
     - `ab -c 10 -t 120 http://localhost:8080/api/ytj/search?name=hhh`
 7. once you're done remove the whole environment
@@ -91,6 +94,7 @@ Alright, let's start the environment finally:
 - add tests (jest and possibly puppeteer)
 - add a css in js library (e.g. styled-components)
 - add a loading icon for the search
+- add eslint
 
 ### Api
 
@@ -101,6 +105,11 @@ Alright, let's start the environment finally:
 ### Models
 
 - give this module a better name (?)
+
+### Other
+
+- plan how production build, release and deployment should be done
+    - currently e.g. the same Dockerfiles and entrypoints cannot be used
 
 ## Related articles etc.
 
