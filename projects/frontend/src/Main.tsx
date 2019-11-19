@@ -45,7 +45,7 @@ const Main: FunctionComponent = () => {
       {!R.isEmpty(results.items) &&
         <table className="results">
           <tbody>
-          {results.items.map((result: SearchResultItem, idx) => {
+          {results.items.map((result: SearchResultItem, idx: number) => {
             return (
               <tr key={idx}>
                  <td className="resultRow">
